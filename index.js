@@ -2,15 +2,45 @@ const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
-canvas.height = windows.innerHeight;
+canvas.height = window.innerHeight;
+
+const x = canvas.width / 2; //to position element
+const y = canvas.height / 2;
 
 class Player {
   constructor(x, y, radius, color) {
-    this.x = y;
+    this.x = x;
     this.y = y;
     this.radius = radius;
     this.color = color;
   }
+  draw() {
+    c.beginPath();
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    c.fillStyle = this.color;
+    c.fill();
+  }
 }
 
-const Player = new Player(100, 100);
+class Projectiles {
+  constructor(x, y, radius, color, speed) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+    this.speed = speed;
+  }
+  draw() {
+    c.beginPath();
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    c.fillStyle = this.color;
+    c.fill();
+  }
+}
+
+const player = new Player(x, y, 30, "blue");
+player.draw();
+
+window.addEventListener("click", () => {
+  console.log("go");
+});
