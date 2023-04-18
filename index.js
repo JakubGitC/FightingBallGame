@@ -22,7 +22,7 @@ class Player {
   }
 }
 
-class Projectiles {
+class Projectile {
   constructor(x, y, radius, color, speed) {
     this.x = x;
     this.y = y;
@@ -36,11 +36,38 @@ class Projectiles {
     c.fillStyle = this.color;
     c.fill();
   }
+  update() {
+    this.draw();
+    this.x = this.x + this.speed.x;
+    this.y = this.y + this.speed.y;
+  }
 }
 
-const player = new Player(x, y, 30, "blue");
-player.draw();
+const projectiles = [];
+function animate() {
+  requestAnimationFrame(animate);
+  c.clearRect(0, 0, canvas.width, canvas.height);
+  player.draw();
+  projectiles.forEach((projectile) => {
+    projectile.update();
+  });
+}
 
-window.addEventListener("click", () => {
-  console.log("go");
+window.addEventListener("click", (event) => {
+  const angle = Math.atan2(
+    event.clientY - canvas.height / 2,
+    event.clientX - canvas.width / 2
+  );
+  const velocity = {
+    x: Math.cos(angle),
+    y: Math.sin(angle),
+  };
+
+  projectiles.push(
+    new Projectile(canvas.width / 2, canvas.height / 2, 5, "red", velocity)
+  );
 });
+
+const player = new Player(x, y, 30, "blue");
+
+animate();
