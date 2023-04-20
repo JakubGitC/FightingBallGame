@@ -78,7 +78,7 @@ function spawnEnemies() {
       x = Math.random() * canvas.width;
       y = Math.random() * canvas.height;
     }
-    const color = "green";
+    const color = `hsl(${Math.random() * 360},50%,50%)`;
     const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x);
     const velocity = {
       x: Math.cos(angle),
@@ -89,21 +89,35 @@ function spawnEnemies() {
   }, 600);
 }
 
+let animationId;
 function animate() {
-  requestAnimationFrame(animate);
-  c.clearRect(0, 0, canvas.width, canvas.height);
+  animationId = requestAnimationFrame(animate);
+  c.fillStyle = "rgba(330,330,250,0.1)";
+  c.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
   projectiles.forEach((projectile) => {
     projectile.update();
   });
 
+  //detecting collision
   enemies.forEach((enemy, index) => {
     enemy.update();
+
+    const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+    //end game
+    if (dist - enemy.radius - player.radius < 1) {
+      cancelAnimationFrame(animationId);
+      console.log("cze");
+    }
+
     projectiles.forEach((projectile, projectileIndex) => {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
-      if (dist - enemy.radius < 1) {
-        enemies.splice(index, 1);
-        projectiles.splice(projectileIndex, 1);
+      // when projectiles hit enemy
+      if (dist - enemy.radius - projectile.radius < 1) {
+        setTimeout(() => {
+          enemies.splice(index, 1);
+          projectiles.splice(projectileIndex, 1);
+        }, 0);
       }
     });
   });
@@ -115,16 +129,22 @@ window.addEventListener("click", (event) => {
     event.clientX - canvas.width / 2
   );
   const velocity = {
-    x: Math.cos(angle),
-    y: Math.sin(angle),
+    x: Math.cos(angle) * 4,
+    y: Math.sin(angle) * 4,
   };
 
   projectiles.push(
-    new Projectile(canvas.width / 2, canvas.height / 2, 5, "red", velocity)
+    new Projectile(
+      canvas.width / 2,
+      canvas.height / 2,
+      5,
+      `hsl(${Math.random() * 360},50%,50%)`,
+      velocity
+    )
   );
 });
 
-const player = new Player(x, y, 30, "blue");
+const player = new Player(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
 
 animate();
 spawnEnemies();
