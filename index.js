@@ -86,8 +86,7 @@ function spawnEnemies() {
     };
 
     enemies.push(new Enemy(x, y, radius, color, velocity));
-    console.log(enemies);
-  }, 1000);
+  }, 600);
 }
 
 function animate() {
@@ -98,8 +97,15 @@ function animate() {
     projectile.update();
   });
 
-  enemies.forEach((enemy) => {
+  enemies.forEach((enemy, index) => {
     enemy.update();
+    projectiles.forEach((projectile, projectileIndex) => {
+      const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+      if (dist - enemy.radius < 1) {
+        enemies.splice(index, 1);
+        projectiles.splice(projectileIndex, 1);
+      }
+    });
   });
 }
 
