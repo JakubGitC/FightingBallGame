@@ -64,8 +64,30 @@ class Enemy {
   }
 }
 
+class Particle {
+  constructor(x, y, radius, color, speed) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+    this.speed = speed;
+  }
+  draw() {
+    c.beginPath();
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    c.fillStyle = this.color;
+    c.fill();
+  }
+  update() {
+    this.draw();
+    this.x = this.x + this.speed.x;
+    this.y = this.y + this.speed.y;
+  }
+}
+const player = new Player(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
 const projectiles = [];
 const enemies = [];
+const particles = [];
 function spawnEnemies() {
   setInterval(() => {
     const radius = (Math.random() + 15) * 2;
@@ -92,6 +114,9 @@ function animate() {
   c.fillStyle = "rgba(330,330,250,0.1)";
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
+  particles.forEach((particle) => {
+    particle.update();
+  });
   projectiles.forEach((projectile) => {
     projectile.update();
   });
@@ -111,6 +136,21 @@ function animate() {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
       // when projectiles hit enemy
       if (dist - enemy.radius - projectile.radius < 1) {
+        // explosions
+        for (let i = 0; i < 2; i++) {
+          particles.push(
+            new Particle(
+              projectile.x,
+              projectile.y,
+              (Math.random() + 0.4) * 2,
+              enemy.color,
+              {
+                x: (Math.random() - 0.5) * (Math.random() * 5),
+                y: (Math.random() - 0.5) * (Math.random() * 5),
+              }
+            )
+          );
+        }
         if (enemy.radius - 10 > 10) {
           enemy.radius -= 5;
           setTimeout(() => {
@@ -147,8 +187,6 @@ window.addEventListener("click", (event) => {
     )
   );
 });
-
-const player = new Player(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
 
 animate();
 spawnEnemies();
