@@ -68,14 +68,11 @@ const projectiles = [];
 const enemies = [];
 function spawnEnemies() {
   setInterval(() => {
-    const radius = Math.random() * (30 - 4) + 10;
+    const radius = (Math.random() + 15) * 2;
     let x;
     let y;
-    if (Math.random() < 0.5) {
+    if (true) {
       x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
-      y = Math.random() * canvas.height;
-    } else {
-      x = Math.random() * canvas.width;
       y = Math.random() * canvas.height;
     }
     const color = `hsl(${Math.random() * 360},50%,50%)`;
@@ -86,7 +83,7 @@ function spawnEnemies() {
     };
 
     enemies.push(new Enemy(x, y, radius, color, velocity));
-  }, 600);
+  }, 1000);
 }
 
 let animationId;
@@ -114,10 +111,17 @@ function animate() {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
       // when projectiles hit enemy
       if (dist - enemy.radius - projectile.radius < 1) {
-        setTimeout(() => {
-          enemies.splice(index, 1);
-          projectiles.splice(projectileIndex, 1);
-        }, 0);
+        if (enemy.radius - 10 > 10) {
+          enemy.radius -= 5;
+          setTimeout(() => {
+            projectiles.splice(projectileIndex, 1);
+          }, 0);
+        } else {
+          setTimeout(() => {
+            enemies.splice(index, 1);
+            projectiles.splice(projectileIndex, 1);
+          }, 0);
+        }
       }
     });
   });
