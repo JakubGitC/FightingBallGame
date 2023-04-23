@@ -7,6 +7,8 @@ canvas.height = window.innerHeight;
 const x = canvas.width / 2; //to position element
 const y = canvas.height / 2;
 
+const scoreEl = document.querySelector("#scoreEl");
+
 class Player {
   constructor(x, y, radius, color) {
     this.x = x;
@@ -90,7 +92,7 @@ const enemies = [];
 const particles = [];
 function spawnEnemies() {
   setInterval(() => {
-    const radius = (Math.random() + 15) * 2;
+    const radius = Math.random() * 25 + 15;
     let x;
     let y;
     if (true) {
@@ -105,13 +107,14 @@ function spawnEnemies() {
     };
 
     enemies.push(new Enemy(x, y, radius, color, velocity));
-  }, 1000);
+  }, 700);
 }
 
 let animationId;
+let score = 0;
 function animate() {
   animationId = requestAnimationFrame(animate);
-  c.fillStyle = "rgba(330,330,250,0.1)";
+  c.fillStyle = "rgba(330,330,250,0.2)";
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
   particles.forEach((particle) => {
@@ -136,8 +139,10 @@ function animate() {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
       // when projectiles hit enemy
       if (dist - enemy.radius - projectile.radius < 1) {
+        score += 100;
+        scoreEl.innerHTML = score;
         // explosions
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
           particles.push(
             new Particle(
               projectile.x,
@@ -145,14 +150,14 @@ function animate() {
               (Math.random() + 0.4) * 2,
               enemy.color,
               {
-                x: (Math.random() - 0.5) * (Math.random() * 5),
-                y: (Math.random() - 0.5) * (Math.random() * 5),
+                x: (Math.random() - 0.5) * (Math.random() * 6),
+                y: (Math.random() - 0.5) * (Math.random() * 6),
               }
             )
           );
         }
         if (enemy.radius - 10 > 10) {
-          enemy.radius -= 5;
+          enemy.radius -= 7;
           setTimeout(() => {
             projectiles.splice(projectileIndex, 1);
           }, 0);
@@ -173,8 +178,8 @@ window.addEventListener("click", (event) => {
     event.clientX - canvas.width / 2
   );
   const velocity = {
-    x: Math.cos(angle) * 4,
-    y: Math.sin(angle) * 4,
+    x: Math.cos(angle) * 9,
+    y: Math.sin(angle) * 9,
   };
 
   projectiles.push(
