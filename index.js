@@ -8,7 +8,8 @@ const x = canvas.width / 2; //to position element
 const y = canvas.height / 2;
 
 const scoreEl = document.querySelector("#scoreEl");
-
+const btn = document.querySelector("button");
+const panelToStartGame = document.querySelector(".endGame");
 class Player {
   constructor(x, y, radius, color) {
     this.x = x;
@@ -132,7 +133,7 @@ function animate() {
     //end game
     if (dist - enemy.radius - player.radius < 1) {
       cancelAnimationFrame(animationId);
-      console.log("cze");
+      panelToStartGame.style.display = "flex";
     }
 
     projectiles.forEach((projectile, projectileIndex) => {
@@ -142,7 +143,7 @@ function animate() {
         score += 100;
         scoreEl.innerHTML = score;
         // explosions
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 10; i++) {
           particles.push(
             new Particle(
               projectile.x,
@@ -150,8 +151,12 @@ function animate() {
               (Math.random() + 0.4) * 2,
               enemy.color,
               {
-                x: (Math.random() - 0.5) * (Math.random() * 6),
-                y: (Math.random() - 0.5) * (Math.random() * 6),
+                x:
+                  (Math.random() < 0.5 ? 1 : -1) *
+                  Math.floor(Math.random() * 2 + 1),
+                y:
+                  (Math.random() < 0.5 ? 1 : -1) *
+                  Math.floor(Math.random() * 2 + 1),
               }
             )
           );
@@ -193,5 +198,8 @@ window.addEventListener("click", (event) => {
   );
 });
 
-animate();
-spawnEnemies();
+btn.addEventListener("click", () => {
+  animate();
+  spawnEnemies();
+  panelToStartGame.style.display = "none";
+});

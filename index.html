@@ -4,19 +4,50 @@
       body {
         margin: 0;
       }
-      div {
+      .score {
         position: fixed;
-
         background-color: rgba(330, 330, 250, 1);
         color: black;
         margin: 0.5rem;
       }
       canvas {
       }
+      .endGame {
+        position: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        top: 50%;
+        right: 50%;
+        transform: translate(50%, -50%);
+        background-color: aliceblue;
+
+        padding: 1.5rem 5rem;
+        flex-direction: column;
+      }
+      button {
+        padding: 0.5rem 8rem;
+        border-radius: 0.7rem;
+        font-size: 1rem;
+        background-color: rgb(60, 60, 179);
+        border: none;
+        color: white;
+      }
+      p {
+        font-weight: 900;
+        font-size: 1.4rem;
+      }
     </style>
   </head>
   <body>
-    <div><span>Score:</span><span id="scoreEl">0</span></div>
+    <div class="score"><span>Score:</span><span id="scoreEl">0</span></div>
+
+    <div class="endGame">
+      <p>0 <span>Points</span></p>
+
+      <button>Start Game</button>
+    </div>
+
     <canvas></canvas>
     <script src="index.js"></script>
   </body>
