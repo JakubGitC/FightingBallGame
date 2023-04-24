@@ -10,6 +10,7 @@ const y = canvas.height / 2;
 const scoreEl = document.querySelector("#scoreEl");
 const btn = document.querySelector("button");
 const panelToStartGame = document.querySelector(".endGame");
+const scoreCounter = document.querySelector(".scoreMain");
 class Player {
   constructor(x, y, radius, color) {
     this.x = x;
@@ -87,10 +88,21 @@ class Particle {
     this.y = this.y + this.speed.y;
   }
 }
-const player = new Player(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
-const projectiles = [];
-const enemies = [];
-const particles = [];
+let player = new Player(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
+let projectiles = [];
+let enemies = [];
+let particles = [];
+
+function init() {
+  player = new Player(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
+  projectiles = [];
+  enemies = [];
+  particles = [];
+  score = 0;
+  scoreEl.textContent = 0;
+  scoreCounter.textContent = 0;
+}
+
 function spawnEnemies() {
   setInterval(() => {
     const radius = Math.random() * 25 + 15;
@@ -115,7 +127,7 @@ let animationId;
 let score = 0;
 function animate() {
   animationId = requestAnimationFrame(animate);
-  c.fillStyle = "rgba(330,330,250,0.2)";
+  c.fillStyle = "rgba(330,330,250,0.5)";
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
   particles.forEach((particle) => {
@@ -133,6 +145,7 @@ function animate() {
     //end game
     if (dist - enemy.radius - player.radius < 1) {
       cancelAnimationFrame(animationId);
+      scoreCounter.textContent = score;
       panelToStartGame.style.display = "flex";
     }
 
@@ -140,23 +153,30 @@ function animate() {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
       // when projectiles hit enemy
       if (dist - enemy.radius - projectile.radius < 1) {
-        score += 100;
+        score += 50;
         scoreEl.innerHTML = score;
+        if (enemy.radius - projectile.radius < 15) {
+          score += 400;
+          scoreEl.innerHTML = score;
+        }
+
         // explosions
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 15; i++) {
           particles.push(
             new Particle(
               projectile.x,
               projectile.y,
-              (Math.random() + 0.4) * 2,
+              (Math.random() + 0.2) * 2,
               enemy.color,
               {
                 x:
-                  (Math.random() < 0.5 ? 1 : -1) *
-                  Math.floor(Math.random() * 2 + 1),
+                  Math.random() < 0.5
+                    ? Math.random() - 1 * Math.floor(Math.random() * 2 + 1)
+                    : Math.random() + 1 * Math.floor(Math.random() * 2 + 1),
                 y:
-                  (Math.random() < 0.5 ? 1 : -1) *
-                  Math.floor(Math.random() * 2 + 1),
+                  Math.random() < 0.5
+                    ? Math.random() - 1 * Math.floor(Math.random() * 2 + 1)
+                    : Math.random() + 1 * Math.floor(Math.random() * 2 + 1),
               }
             )
           );
@@ -199,7 +219,10 @@ window.addEventListener("click", (event) => {
 });
 
 btn.addEventListener("click", () => {
-  animate();
-  spawnEnemies();
   panelToStartGame.style.display = "none";
+
+  init();
+  animate();
 });
+
+spawnEnemies();
