@@ -11,7 +11,7 @@ const scoreEl = document.querySelector("#scoreEl");
 const btn = document.querySelector("button");
 const panelToStartGame = document.querySelector(".endGame");
 const scoreCounter = document.querySelector(".scoreMain");
-class Player {
+class Gamer {
   constructor(x, y, radius, color) {
     this.x = x;
     this.y = y;
@@ -26,7 +26,7 @@ class Player {
   }
 }
 
-class Projectile {
+class Bullet {
   constructor(x, y, radius, color, speed) {
     this.x = x;
     this.y = y;
@@ -88,14 +88,14 @@ class Particle {
     this.y = this.y + this.speed.y;
   }
 }
-let player = new Player(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
-let projectiles = [];
+let gamer = new Gamer(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
+let bullets = [];
 let enemies = [];
 let particles = [];
 
 function init() {
-  player = new Player(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
-  projectiles = [];
+  gamer = new Gamer(x, y, 20, `hsl(${Math.random() * 360},50%,50%)`);
+  bullets = [];
   enemies = [];
   particles = [];
   score = 0;
@@ -103,7 +103,7 @@ function init() {
   scoreCounter.textContent = 0;
 }
 
-function spawnEnemies() {
+function spawnOpponents() {
   setInterval(() => {
     const radius = Math.random() * 25 + 15;
     let x;
@@ -129,33 +129,33 @@ function animate() {
   animationId = requestAnimationFrame(animate);
   c.fillStyle = "rgba(330,330,250,0.5)";
   c.fillRect(0, 0, canvas.width, canvas.height);
-  player.draw();
+  gamer.draw();
   particles.forEach((particle) => {
     particle.update();
   });
-  projectiles.forEach((projectile) => {
-    projectile.update();
+  bullets.forEach((bullet) => {
+    bullet.update();
   });
 
   //detecting collision
   enemies.forEach((enemy, index) => {
     enemy.update();
 
-    const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+    const dist = Math.hypot(gamer.x - enemy.x, gamer.y - enemy.y);
     //end game
-    if (dist - enemy.radius - player.radius < 1) {
+    if (dist - enemy.radius - gamer.radius < 1) {
       cancelAnimationFrame(animationId);
       scoreCounter.textContent = score;
       panelToStartGame.style.display = "flex";
     }
 
-    projectiles.forEach((projectile, projectileIndex) => {
-      const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
-      // when projectiles hit enemy
-      if (dist - enemy.radius - projectile.radius < 1) {
+    bullets.forEach((bullet, projectileIndex) => {
+      const dist = Math.hypot(bullet.x - enemy.x, bullet.y - enemy.y);
+      // when bullets hit enemy
+      if (dist - enemy.radius - bullet.radius < 1) {
         score += 50;
         scoreEl.innerHTML = score;
-        if (enemy.radius - projectile.radius < 15) {
+        if (enemy.radius - bullet.radius < 15) {
           score += 400;
           scoreEl.innerHTML = score;
         }
@@ -164,8 +164,8 @@ function animate() {
         for (let i = 0; i < 15; i++) {
           particles.push(
             new Particle(
-              projectile.x,
-              projectile.y,
+              bullet.x,
+              bullet.y,
               (Math.random() + 0.2) * 2,
               enemy.color,
               {
@@ -184,12 +184,12 @@ function animate() {
         if (enemy.radius - 10 > 10) {
           enemy.radius -= 7;
           setTimeout(() => {
-            projectiles.splice(projectileIndex, 1);
+            bullets.splice(projectileIndex, 1);
           }, 0);
         } else {
           setTimeout(() => {
             enemies.splice(index, 1);
-            projectiles.splice(projectileIndex, 1);
+            bullets.splice(projectileIndex, 1);
           }, 0);
         }
       }
@@ -207,8 +207,8 @@ window.addEventListener("click", (event) => {
     y: Math.sin(angle) * 9,
   };
 
-  projectiles.push(
-    new Projectile(
+  bullets.push(
+    new Bullet(
       canvas.width / 2,
       canvas.height / 2,
       5,
@@ -225,4 +225,4 @@ btn.addEventListener("click", () => {
   animate();
 });
 
-spawnEnemies();
+spawnOpponents();
